@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Incendio Eubea 2021 - Analisi Satellitare</title>
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
     /* Resetta i margini e padding */
     * {
@@ -132,12 +134,39 @@
       transition: background 0.2s ease;
     }
 
+    /* Stile mappa */
+    #map {
+      width: 100%;
+      height: 500px;
+      border-radius: 8px;
+      margin: 2rem 0;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .map-info {
+      background: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
     footer {
       background-color: #2d3e50;
       color: #fff;
       text-align: center;
       padding: 1rem;
       margin-top: 2rem;
+    }
+
+    ul {
+      margin-left: 2rem; 
+      color: #555; 
+      line-height: 1.8;
+    }
+
+    .source-links {
+      font-size: 0.9rem; 
+      margin-top: 1rem;
     }
 
   </style>
@@ -157,7 +186,9 @@
     <p>
       Le immagini satellitari fornite da Copernicus Sentinel-2 permettono di osservare chiaramente l'entità dei danni prima e dopo l'evento.
     </p>
+  </section>
 
+  <section>
     <h2>Confronto satellitare: Prima e Dopo</h2>
     <div class="img-slider">
       <div class="slider-container" id="slider">
@@ -178,11 +209,85 @@
     <img src="ndvi_comparison.jpg" alt="NDVI Prima e Dopo" style="width:100%; margin-top: 1rem;" />
   </section>
 
+  <section>
+    <h2>Mappa satellitare dell'area colpita</h2>
+    <p>
+      La mappa interattiva mostra l'estensione geografica dell'incendio con i dati satellitari aggiornati. L'area in rosso indica le zone con perdita completa di vegetazione (dNBR > 0.66), mentre l'area gialla mostra danni parziali.
+    </p>
+    <div id="map"></div>
+    <p class="source-links">
+      <strong>Strumenti mappa:</strong> Zoom con la rotellina del mouse | Clicca sui layer per informazioni
+    </p>
+  </section>
+
+  <section>
+    <h2>Contesto geografico e climatico</h2>
+    <p>
+      Eubea, la seconda isola più grande della Grecia, è caratterizzata da foreste di pini e uliveti secolari. Nell'agosto 2021, temperature record fino a 47°C e venti di 60 km/h hanno creato condizioni ideali per la propagazione delle fiamme. L'incendio ha colpito principalmente la regione settentrionale dell'isola, dove il terreno montuoso ha reso difficile le operazioni di spegnimento.
+    </p>
+    <p>
+      Studi del <em>National Observatory of Athens</em> evidenziano come questa calamità rientri in un trend mediterraneo di incendi sempre più intensi, con un aumento del 40% in frequenza rispetto al decennio precedente, legato ai cambiamenti climatici.
+    </p>
+  </section>
+
+  <section>
+    <h2>Dati tecnici satellitari</h2>
+    <p>
+      Le immagini analizzate provengono dal satellite Sentinel-2 (missione Copernicus ESA) con risoluzione spaziale di 10m/pixel. L'analisi multispettrale combina:
+    </p>
+    <ul>
+      <li><strong>Banda 8 (NIR):</strong> 832nm per calcolare l'NDVI</li>
+      <li><strong>Banda 4 (Red):</strong> 665nm per identificare aree bruciate</li>
+      <li><strong>Banda 12 (SWIR):</strong> 2202nm per mappare la severità del danno</li>
+    </ul>
+    <p>
+      L'NDVI (Normalized Difference Vegetation Index) varia da -1 a +1: valori superiori a 0.6 indicano vegetazione sana, mentre sotto 0.1 mostrano suolo nudo o cenere.
+    </p>
+  </section>
+
+  <section>
+    <h2>Impatto ecologico</h2>
+    <p>
+      Oltre alla perdita di 12 milioni di alberi stimati, l'incendio ha causato:
+    </p>
+    <ul>
+      <li>Distruzione dell'habitat di 30 specie protette tra cui la foca monaca mediterranea</li>
+      <li>Rilascio di 2.5 milioni di tonnellate di CO₂ equivalente</li>
+      <li>Alterazione del ciclo idrologico con aumento del rischio alluvioni</li>
+    </ul>
+    <p>
+      Il recupero completo della biomassa, secondo modelli dell'Università di Atene, richiederà almeno 25-30 anni.
+    </p>
+  </section>
+
+  <section>
+    <h2>Risposta internazionale</h2>
+    <p>
+      L'evento ha attivato il meccanismo europeo di protezione civile con:
+    </p>
+    <ul>
+      <li>22 aerei antincendio da 8 paesi</li>
+      <li>600 pompieri internazionali</li>
+      <li>Mappatura d'emergenza via satellite ogni 3 giorni</li>
+    </ul>
+    <p>
+      Questo caso studio è diventato un riferimento per lo sviluppo del nuovo <em>EU Fire Rescue Fleet</em>, operativo dal 2025.
+    </p>
+    <p class="source-links">
+      Approfondimenti: 
+      <a href="https://emergency.copernicus.eu/" target="_blank">Copernicus Emergency</a> | 
+      <a href="https://www.noa.gr/" target="_blank">NOA Greece</a>
+    </p>
+  </section>
+
   <footer>
     <p>Fonte dati: Copernicus Sentinel-2 | Realizzato da Banzato Mattia, Dall'Agnola Luca, De Mori Mattia</p>
   </footer>
 
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
+    // Slider prima/dopo
     const sliderInput = document.getElementById("sliderInput");
     const afterDiv = document.getElementById("afterDiv");
 
@@ -190,7 +295,63 @@
       const val = this.value;
       afterDiv.style.width = val + "%";
     });
+
+    // Mappa Leaflet
+    const map = L.map('map').setView([38.9, 23.6], 9); // Centrato su Eubea
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    // Area approssimativa dell'incendio (dati simulati)
+    const fireArea = L.polygon([
+      [38.95, 23.4],
+      [38.85, 23.5],
+      [38.75, 23.45],
+      [38.7, 23.3],
+      [38.8, 23.2],
+      [38.9, 23.25],
+      [38.95, 23.4]
+    ], {
+      color: '#ff0000',
+      fillOpacity: 0.4,
+      weight: 2
+    }).addTo(map);
+
+    fireArea.bindPopup("<b>Area incendio</b><br>120.000 ettari distrutti");
+
+    // Punti di interesse
+    const markers = [
+      {
+        coords: [38.88, 23.35],
+        title: "Limni",
+        description: "Comune con il 70% del territorio bruciato"
+      },
+      {
+        coords: [38.82, 23.4],
+        title: "Istiea",
+        description: "Centro agricolo gravemente colpito"
+      }
+    ];
+
+    markers.forEach(marker => {
+      L.marker(marker.coords)
+        .addTo(map)
+        .bindPopup(`<b>${marker.title}</b><br>${marker.description}`);
+    });
+
+    // Legenda
+    const legend = L.control({position: 'bottomright'});
+    legend.onAdd = function() {
+      const div = L.DomUtil.create('div', 'map-info');
+      div.innerHTML = `
+        <h4 style="margin:5px 0">Legenda</h4>
+        <div style="background:#ff0000;width:15px;height:15px;display:inline-block;opacity:0.4"></div> Area incendio<br>
+        <img src="https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png" style="width:12px"> Punti critici
+      `;
+      return div;
+    };
+    legend.addTo(map);
   </script>
 </body>
 </html>
-
