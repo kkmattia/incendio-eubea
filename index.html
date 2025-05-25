@@ -3,252 +3,72 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Analisi Scientifica: Incendio Eubea 2021</title>
-  <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <title>Analisi NDVI - Incendio Eubea</title>
+
+  <!-- JuxtaposeJS -->
+  <link rel="stylesheet" href="https://cdn.knightlab.com/libs/juxtapose/latest/css/juxtapose.css" />
+  <script src="https://cdn.knightlab.com/libs/juxtapose/latest/js/juxtapose.min.js"></script>
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Stili personalizzati -->
   <style>
-    /* Reset e impostazioni base */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
     body {
-      font-family: 'Georgia', serif;
-      line-height: 1.7;
-      background-color: #f5f5f5;
-      color: #333;
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background-color: #f7f7f7;
+      color: #222;
     }
 
-    /* Header */
     header {
-      background-color: #2c3e50;
-      color: #ffffff;
+      background-color: #1d3557;
+      color: white;
+      padding: 1rem 2rem;
       text-align: center;
-      padding: 3rem 2rem;
-      border-bottom: 5px solid #1a252f;
     }
 
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-      font-weight: 600;
-    }
-
-    .subtitle {
-      font-size: 1.3rem;
-      font-weight: 300;
-      max-width: 800px;
+    main {
+      padding: 2rem;
+      max-width: 1000px;
       margin: 0 auto;
-      color: #ecf0f1;
     }
 
-    /* Sezioni principali */
     section {
-      max-width: 1100px;
-      margin: 2rem auto;
-      padding: 2.5rem;
-      background-color: #ffffff;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      border-left: 4px solid #2c3e50;
+      margin-bottom: 3rem;
     }
 
     h2 {
-      font-size: 2rem;
-      color: #2c3e50;
-      margin-bottom: 1.5rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 2px solid #eaecef;
+      margin-bottom: 1rem;
+      color: #1d3557;
     }
 
-    h3 {
-      font-size: 1.5rem;
-      color: #34495e;
-      margin: 1.8rem 0 1rem;
-    }
-
-    p {
-      font-size: 1.1rem;
-      color: #444;
-      line-height: 1.8;
-      margin-bottom: 1.3rem;
-      text-align: justify;
-    }
-
-    ul, ol {
-      margin-bottom: 1.5rem;
-      padding-left: 2rem;
-    }
-
-    li {
-      margin-bottom: 0.7rem;
-      line-height: 1.6;
-    }
-
-    /* Slider immagini */
-    .img-slider {
-      width: 100%;
-      max-width: 900px;
-      margin: 2.5rem auto;
-    }
-
-    .slider-container {
-      position: relative;
-      width: 100%;
+    .juxtapose {
+      max-width: 100%;
       height: 500px;
+      border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
     }
 
-    .slider-container img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .slider-container .after {
-      position: absolute;
-      top: 0;
-      right: 0; /* Modificato da left a right per invertire l'ordine */
-      width: 0%;
-      height: 100%;
-      overflow: hidden;
-      transition: width 0.5s ease;
-    }
-
-    /* Input range */
-    input[type="range"] {
-      width: 100%;
-      margin-top: 1.5rem;
-      -webkit-appearance: none;
-      height: 8px;
-      background: #ddd;
-      border-radius: 4px;
-      outline: none;
-    }
-
-    input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: #2c3e50;
-      cursor: pointer;
-      border: 2px solid #fff;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
-
-    /* Mappa */
-    .map-container {
-      width: 100%;
-      height: 550px;
-      margin: 2.5rem 0;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    .comparison-img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
     }
 
     #map {
-      width: 100%;
-      height: 100%;
+      height: 500px;
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
     }
 
-    .map-overlay {
-      position: absolute;
-      bottom: 20px;
-      left: 20px;
-      background: rgba(255, 255, 255, 0.9);
-      padding: 10px 15px;
-      border-radius: 4px;
-      z-index: 1000;
-      font-size: 0.9rem;
-      border-left: 3px solid #2c3e50;
-    }
-
-    /* Box informativi */
-    .info-box {
-      background-color: #f8f9fa;
-      border-left: 4px solid #2c3e50;
-      padding: 1.3rem;
-      margin: 1.8rem 0;
-    }
-
-    .info-box h4 {
-      color: #2c3e50;
-      margin-bottom: 0.8rem;
-      font-size: 1.2rem;
-    }
-
-    /* Confronto immagini */
-    .img-comparison {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
-      margin: 2rem 0;
-    }
-
-    .img-comparison img {
-      width: 100%;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-
-    /* Footer */
-    footer {
-      background-color: #2c3e50;
-      color: #ecf0f1;
-      text-align: center;
-      padding: 2rem;
-      margin-top: 3rem;
-      font-size: 0.95rem;
-    }
-
-    .footer-content {
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    .footer-links {
-      display: flex;
-      justify-content: center;
-      gap: 1.5rem;
-      margin-top: 1rem;
-    }
-
-    .footer-links a {
-      color: #bdc3c7;
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-
-    .footer-links a:hover {
-      color: #ffffff;
-      text-decoration: underline;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      h1 {
-        font-size: 2rem;
-      }
-      
-      .subtitle {
-        font-size: 1.1rem;
-      }
-      
-      section {
-        padding: 1.8rem;
-        margin: 1.5rem auto;
-      }
-      
-      h2 {
-        font-size: 1.7rem;
-      }
-      
-      .slider-container, .map-container {
-        height: 350px;
-      }
-
-      .img-comparison {
-        grid-template-columns: 1fr;
+    @media (max-width: 600px) {
+      .juxtapose, #map {
+        height: 300px;
       }
     }
   </style>
@@ -256,210 +76,73 @@
 <body>
 
   <header>
-    <h1>Analisi Scientifica: Incendio a Eubea, Grecia – Agosto 2021</h1>
-    <p class="subtitle">Studio dell'impatto ambientale attraverso dati satellitari e analisi geospaziali</p>
+    <h1>Analisi NDVI dell'Incendio a Eubea (2021)</h1>
   </header>
 
-  <section>
-    <h2>Introduzione</h2>
-    <p>Nell'agosto 2021, l'isola greca di Eubea (Evia) è stata colpita da una serie di incendi boschivi catastrofici che rappresentano uno dei più gravi disastri ambientali nella storia recente del Mediterraneo. Questo studio analizza l'evento attraverso dati satellitari multitemporali, fornendo una valutazione quantitativa dei danni ecologici.</p>
-    
-    <div class="info-box">
-      <h4>Dati chiave sull'incendio:</h4>
-      <ul>
-        <li><strong>Durata:</strong> 3-13 agosto 2021 (fase acuta)</li>
-        <li><strong>Superficie interessata:</strong> 120.000 ettari (≈170.000 campi da calcio)</li>
-        <li><strong>Temperatura massima:</strong> 47.1°C (record regionale)</li>
-        <li><strong>Evacuazioni:</strong> >2.000 persone</li>
-        <li><strong>Emissioni CO₂:</strong> 1,2 milioni di tonnellate</li>
-      </ul>
-    </div>
-  </section>
+  <main>
+    <!-- Sezione Juxtapose -->
+    <section>
+      <h2>Confronto NDVI: Prima e Dopo l'Incendio</h2>
+      <div class="juxtapose" id="juxtapose"></div>
+    </section>
 
-  <section>
-    <h2>Contesto dell'evento</h2>
-    <p>L'incendio di Eubea è stato parte di un'ondata di incendi che ha colpito il Mediterraneo orientale durante l'estate 2021, in condizioni meteorologiche estreme riconducibili al cambiamento climatico.</p>
-    
-    <h3>Fattori predisponenti</h3>
-    <ul>
-      <li><strong>Climatici:</strong> Ondata di calore prolungata con temperature >45°C e umidità <15%</li>
-      <li><strong>Meteorologici:</strong> Vento forte (fino a 100 km/h) e direzione variabile</li>
-      <li><strong>Vegetazionali:</strong> Accumulo di biomassa secca per siccità pluriennale</li>
-      <li><strong>Antropici:</strong> Abbandono delle aree rurali e ridotta manutenzione forestale</li>
-    </ul>
-  </section>
+    <!-- Immagine di confronto -->
+    <section>
+      <h2>Analisi Visiva della Differenza NDVI</h2>
+      <img src="img/ndvi_comparison.jpg" alt="Confronto NDVI" class="comparison-img" />
+    </section>
 
-  <section>
-    <h2>Analisi multitemporale</h2>
-    <p>Il confronto satellitare mostra l'entità della devastazione. Lo slider permette di valutare la transizione dallo stato pre-incendio (destra) a quello post-incendio (sinistra).</p>
-    
-    <div class="img-slider">
-      <div class="slider-container" id="slider">
-        <img src="img/after.jpg" alt="Situazione post-incendio" />
-        <div class="after" id="afterDiv">
-          <img src="img/before.jpg" alt="Situazione pre-incendio" />
-        </div>
-      </div>
-      <input type="range" min="0" max="100" value="0" id="sliderInput" />
-    </div>
-    
-    <div class="info-box">
-      <h4>Specifiche tecniche:</h4>
-      <p>Immagini Sentinel-2 (10m risoluzione) in composizione naturale (bande 4-3-2). Data acquisizione: 20/08/2021 (post-evento) e 15/07/2021 (pre-evento). Elaborazione con software ESA SNAP.</p>
-    </div>
-  </section>
-
-  <section>
-    <h2>Analisi NDVI</h2>
-    <p>L'Indice di Vegetazione di Differenza Normalizzata (NDVI) quantifica la perdita di biomassa vegetale:</p>
-    
-    <div class="img-comparison">
-      <img src="img/ndvi_after.jpg" alt="NDVI post-incendio">
-      <img src="img/ndvi_before.jpg" alt="NDVI pre-incendio">
-    </div>
-    
-    <h3>Risultati quantitativi</h3>
-    <table style="width:100%; border-collapse: collapse; margin:1.5rem 0;">
-      <thead>
-        <tr style="background-color:#2c3e50; color:#fff;">
-          <th style="padding:10px; text-align:left;">Parametro</th>
-          <th style="padding:10px; text-align:right;">Valore</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr style="border-bottom:1px solid #ddd;">
-          <td style="padding:10px;">Perdita media NDVI</td>
-          <td style="padding:10px; text-align:right;">-87%</td>
-        </tr>
-        <tr style="border-bottom:1px solid #ddd;">
-          <td style="padding:10px;">Aree con NDVI ≤ 0</td>
-          <td style="padding:10px; text-align:right;">63% superficie bruciata</td>
-        </tr>
-        <tr>
-          <td style="padding:10px;">Recupero a 6 mesi</td>
-          <td style="padding:10px; text-align:right;">15% aree colpite</td>
-        </tr>
-      </tbody>
-    </table>
-    
-    <div class="info-box">
-      <h4>Metodologia NDVI:</h4>
-      <p>L'indice è calcolato come (B8 - B4)/(B8 + B4) dove B8=infrarosso vicino (842nm) e B4=rosso (665nm). Valori: [-1,1] dove >0.6 indica vegetazione sana, <0.1 suolo nudo.</p>
-    </div>
-  </section>
-
-  <section>
-    <h2>Mappa dell'area colpita</h2>
-    <p>La visualizzazione geospaziale evidenzia l'estensione dell'incendio nella parte settentrionale dell'isola:</p>
-    
-    <div class="map-container">
+    <!-- Mappa Leaflet -->
+    <section>
+      <h2>Mappa Interattiva dell'Area Bruciata</h2>
       <div id="map"></div>
-      <div class="map-overlay">Trascina il cursore verticale per confrontare pre/post evento</div>
-    </div>
-    
-    <h3>Osservazioni</h3>
-    <ul>
-      <li>Maggiore intensità nelle foreste di conifere mature</li>
-      <li>Pattern di propagazione influenzato da vento e orografia</li>
-      <li>Zone umide e agricole hanno funzionato da barriere naturali</li>
-    </ul>
-  </section>
+    </section>
+  </main>
 
-  <footer>
-    <div class="footer-content">
-      <p>Studio realizzato per l'anno accademico 2022/2023</p>
-      <p>Fonti dati: ESA Copernicus Sentinel-2 (livello 2A), EM-DAT</p>
-      <div class="footer-links">
-        <a href="https://scihub.copernicus.eu/" target="_blank">Copernicus Open Access Hub</a>
-        <a href="https://earth.esa.int/" target="_blank">ESA Earth Online</a>
-        <a href="https://www.unisdr.org/" target="_blank">UNISDR</a>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Leaflet JS -->
-  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/leaflet-imagecompare@1.4.0/dist/L.ImageCompare.min.js"></script>
+  <!-- Script Juxtapose -->
   <script>
-    // Slider immagini (invertito)
-    const sliderInput = document.getElementById("sliderInput");
-    const afterDiv = document.getElementById("afterDiv");
-
-    sliderInput.addEventListener("input", function() {
-      const val = this.value;
-      afterDiv.style.width = val + "%";
-    });
-
-    // Mappa interattiva
-    const map = L.map('map').setView([38.9, 23.6], 8);
-    
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(map);
-    
-    // Coordinate approssimative Eubea
-    const southWest = L.latLng(38.0, 22.8);
-    const northEast = L.latLng(39.5, 24.4);
-    const bounds = L.latLngBounds(southWest, northEast);
-    
-    // Aggiungi confronto immagini (ordine invertito)
-    L.imageCompare('img/after.jpg', 'img/before.jpg', {
-      position: 'topright',
-      orientation: 'vertical',
-      thumbSize: 50,
-      addToMap: true,
-      bounds: bounds
-    }).addTo(map);
-    
-    // Aree bruciate (dati simulati)
-    const burnedAreas = {
-      "type": "FeatureCollection",
-      "features": [
+    new juxtapose.JXSlider('#juxtapose',
+      [
         {
-          "type": "Feature",
-          "properties": {"intensity": "high"},
-          "geometry": {
-            "type": "Polygon",
-            "coordinates": [[[23.1,38.9],[23.6,38.9],[23.6,39.1],[23.1,39.1],[23.1,38.9]]]
-          }
+          src: 'img/ndvi_before.jpg',
+          label: 'Prima dell\'Incendio'
         },
         {
-          "type": "Feature",
-          "properties": {"intensity": "medium"},
-          "geometry": {
-            "type": "Polygon",
-            "coordinates": [[[23.0,38.7],[23.4,38.7],[23.4,38.9],[23.0,38.9],[23.0,38.7]]]
-          }
+          src: 'img/ndvi_after.jpg',
+          label: 'Dopo l\'Incendio'
         }
-      ]
-    };
-    
-    L.geoJSON(burnedAreas, {
-      style: function(feature) {
-        return {
-          color: feature.properties.intensity === "high" ? "#c0392b" : "#e67e22",
-          weight: 1,
-          opacity: 0.8,
-          fillOpacity: 0.15
-        };
-      }
-    }).addTo(map);
-    
-    // Legenda
-    const legend = L.control({position: 'bottomleft'});
-    legend.onAdd = function() {
-      const div = L.DomUtil.create('div', 'info legend');
-      div.style.backgroundColor = 'rgba(255,255,255,0.8)';
-      div.style.padding = '10px';
-      div.style.borderRadius = '4px';
-      div.innerHTML = `
-        <h4 style="margin:0 0 8px 0; color:#2c3e50;">Legenda</h4>
-        <div style="margin:5px 0;"><span style="background:#c0392b; opacity:0.7; display:inline-block; width:15px; height:15px; margin-right:5px;"></span>Alta intensità</div>
-        <div style="margin:5px 0;"><span style="background:#e67e22; opacity:0.7; display:inline-block; width:15px; height:15px; margin-right:5px;"></span>Media intensità</div>
-      `;
-      return div;
-    };
-    legend.addTo(map);
+      ],
+      {
+        animate: true,
+        showLabels: true,
+        showCredits: false,
+        startingPosition: "50%",
+        makeResponsive: true
+      });
   </script>
+
+  <!-- Script Leaflet -->
+  <script>
+    const map = L.map('map').setView([38.7, 23.9], 10);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Esempio di poligono area bruciata (modificabile con coordinate precise se le hai)
+    const fireArea = [
+      [38.775, 23.855],
+      [38.765, 23.935],
+      [38.715, 23.925],
+      [38.725, 23.845]
+    ];
+
+    L.polygon(fireArea, {
+      color: 'red',
+      fillColor: '#f03',
+      fillOpacity: 0.5
+    }).addTo(map).bindPopup('Area Bruciata - Incendio 2021');
+  </script>
+
 </body>
 </html>
