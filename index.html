@@ -5,17 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Incendio Eubea 2021 - Analisi Satellitare</title>
   <style>
+    /* Resetta i margini e padding */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-
+    
     body {
       font-family: 'Arial', sans-serif;
       line-height: 1.6;
       background-color: #f5f5f5;
       color: #333;
+      padding: 0;
+      margin: 0;
     }
 
     header {
@@ -136,6 +139,7 @@
       padding: 1rem;
       margin-top: 2rem;
     }
+
   </style>
 </head>
 <body>
@@ -162,25 +166,16 @@
           <img src="after.jpg" alt="Dopo l'incendio" />
         </div>
       </div>
-      <input type="range" min="0" max="100" value="0" id="sliderInput" />
     </div>
+    <input type="range" min="0" max="100" value="0" id="sliderInput" />
   </section>
 
   <section>
     <h2>Analisi NDVI – Vegetazione danneggiata</h2>
     <p>
-      L'indice NDVI, calcolato a partire dalle bande multispettrali del satellite Sentinel-2, mostra una drastica riduzione della vegetazione sana dopo l'incendio. Le zone verdi (alta vegetazione) sono state sostituite da aree nere, indicative di suolo bruciato o cenere.
+      L'indice NDVI, calcolato a partire dalle bande del satellite, mostra una drastica riduzione della vegetazione sana dopo l'incendio. Le zone verdi sono state sostituite da aree brune o nere, indicative di suolo nudo o cenere.
     </p>
-
-    <div class="img-slider">
-      <div class="slider-container" id="ndviSlider">
-        <img src="ndvi_before.jpg" alt="NDVI prima dell'incendio" />
-        <div class="after" id="ndviAfterDiv">
-          <img src="ndvi_after.jpg" alt="NDVI dopo l'incendio" />
-        </div>
-      </div>
-      <input type="range" min="0" max="100" value="0" id="ndviSliderInput" />
-    </div>
+    <img src="ndvi_comparison.jpg" alt="NDVI Prima e Dopo" style="width:100%; margin-top: 1rem;" />
   </section>
 
   <footer>
@@ -195,15 +190,6 @@
       const val = this.value;
       afterDiv.style.width = val + "%";
     });
-
-    const ndviSliderInput = document.getElementById("ndviSliderInput");
-    const ndviAfterDiv = document.getElementById("ndviAfterDiv");
-
-    ndviSliderInput.addEventListener("input", function () {
-      const val = this.value;
-      ndviAfterDiv.style.width = val + "%";
-    });
   </script>
-
 </body>
 </html>
